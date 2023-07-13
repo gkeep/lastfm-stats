@@ -44,7 +44,7 @@ class PyLastHelper:
 
             tracks.append(track)
 
-    return tracks
+        return tracks
 
     def get_top_played(self, limit: int = 10, period: str = 'PERIOD_1MONTH') -> list:
         """
@@ -71,3 +71,13 @@ class PyLastHelper:
             tracks.append(track)
 
         return tracks
+
+    def get_top_artists(self, limit: int = 10) -> list:
+        data = []
+        userdata = self.userdata.get_top_artists(limit=limit)
+        raw = userdata
+
+        for i in range(0, len(raw)):
+            data.append({"artist": raw[i].item.name})
+
+        return data

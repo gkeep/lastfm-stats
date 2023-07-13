@@ -1,7 +1,9 @@
-import logic
+from logic import PyLastHelper
 import json
 
 user = "gkeep"
 
-tracks = logic.get_top_played(user, 10)
+ph = PyLastHelper(user)
+
+tracks = ph.get_last_played(10)
 print(json.dumps(tracks, indent=2))
