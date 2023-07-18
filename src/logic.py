@@ -29,7 +29,7 @@ class PyLastHelper:
 
             track = {
                 "artist": track_data.artist.name,
-                "track":  track_data.title,
+                "track": track_data.title,
             }
 
             if track_data.get_album():
@@ -39,9 +39,7 @@ class PyLastHelper:
                                               self.lastfm_network).get_cover_image(size=2)
                 })
             else:
-                # TODO: add logging!
                 pass
-
             tracks.append(track)
 
         return tracks
@@ -65,7 +63,7 @@ class PyLastHelper:
 
             track = {
                 "artist": track_data.artist.name,
-                "track":  track_data.title,
+                "track": track_data.title,
             }
 
             tracks.append(track)
@@ -81,3 +79,42 @@ class PyLastHelper:
             data.append({"artist": raw[i].item.name})
 
         return data
+
+
+def test_get_top_played():
+    ph = PyLastHelper("test")
+    res = ph.get_top_played(limit=5)
+
+    assert res == [
+        {'artist': 'The Dillinger Escape Plan', 'track': '43% Burnt'},
+        {'artist': 'The Dillinger Escape Plan', 'track': 'Sugar Coated Sour'},
+        {'artist': 'The Dillinger Escape Plan', 'track': 'Jim Fear'},
+        {'artist': 'The Dillinger Escape Plan', 'track': 'X#..'},
+        {'artist': 'The Dillinger Escape Plan', 'track': "Destro's Secret"}
+    ]
+
+
+def test_get_last_played():
+    ph = PyLastHelper("test")
+    res = ph.get_last_played(limit=5)
+
+    assert res == [
+        {'artist': 'Nine Inch Nails', 'track': 'The Line Begins to Blur', 'album': 'With Teeth',
+         'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/f4241803c93d47478518a5b33e71f0ab.png'},
+        {'artist': 'Nine Inch Nails', 'track': 'The Hand That Feeds', 'album': 'With Teeth',
+         'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/f4241803c93d47478518a5b33e71f0ab.png'},
+        {'artist': 'Nine Inch Nails', 'track': 'The Collector', 'album': 'With Teeth',
+         'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/f4241803c93d47478518a5b33e71f0ab.png'},
+        {'artist': 'Nine Inch Nails', 'track': 'All the Love in the World', 'album': 'With Teeth',
+         'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/f4241803c93d47478518a5b33e71f0ab.png'},
+        {'artist': 'Architecture in Helsinki', 'track': "What's In Store?", 'album': 'In Case We Die',
+         'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/6192ad04cb9c4a2ebc4a02b591b30c70.png'}]
+
+
+def test_get_top_artists():
+    ph = PyLastHelper("test")
+    res = ph.get_top_artists(limit=10)
+
+    assert res == [{'artist': 'The Dillinger Escape Plan'}, {'artist': 'David Bowie'}, {'artist': 'Ferry Corsten'},
+                   {'artist': 'Sparta'}, {'artist': 'Frank Zappa'}, {'artist': 'The Icarus Line'},
+                   {'artist': 'mclusky'}, {'artist': 'Air'}, {'artist': 'Atreyu'}, {'artist': 'Mission of Burma'}]
