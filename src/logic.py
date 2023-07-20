@@ -76,6 +76,16 @@ class PyLastHelper:
                 "track": track_data.title,
             }
 
+            if track_data.get_album():
+                track.update({
+                    "album": track_data.get_album().get_name(),
+                    "cover_url": pylast.Album(track["artist"], track_data.get_album().get_name(),
+                                              self.lastfm_network).get_cover_image(size=2)
+                })
+            else:
+                logger.warning(f"Album unknown for {track}, no album name and cover art available (upstream API issue)")
+
+            logger.debug(f"got {track}")
             tracks.append(track)
 
         return tracks
@@ -95,13 +105,23 @@ def test_get_top_played():
     ph = PyLastHelper("test")
     res = ph.get_top_played(limit=5)
 
-    assert res == [
-        {'artist': 'The Dillinger Escape Plan', 'track': '43% Burnt'},
-        {'artist': 'The Dillinger Escape Plan', 'track': 'Sugar Coated Sour'},
-        {'artist': 'The Dillinger Escape Plan', 'track': 'Jim Fear'},
-        {'artist': 'The Dillinger Escape Plan', 'track': 'X#..'},
-        {'artist': 'The Dillinger Escape Plan', 'track': "Destro's Secret"}
-    ]
+    assert res == [{'album': 'Calculating Infinity',
+                    'artist': 'The Dillinger Escape Plan',
+                    'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/56360fd323eb4bbb8a8db1864cbab41d.jpg',
+                    'track': '43% Burnt'},
+                   {'album': 'Calculating Infinity',
+                    'artist': 'The Dillinger Escape Plan',
+                    'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/56360fd323eb4bbb8a8db1864cbab41d.jpg',
+                    'track': 'Sugar Coated Sour'},
+                   {'album': 'Calculating Infinity',
+                    'artist': 'The Dillinger Escape Plan',
+                    'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/56360fd323eb4bbb8a8db1864cbab41d.jpg',
+                    'track': 'Jim Fear'},
+                   {'artist': 'The Dillinger Escape Plan', 'track': 'X#..'},
+                   {'album': "Cursed, Unshaven and Misbehavin': Live Infinity",
+                    'artist': 'The Dillinger Escape Plan',
+                    'cover_url': 'https://lastfm.freetls.fastly.net/i/u/174s/75df1b826f8cb0debf09d476d8c8bdd8.jpg',
+                    'track': "Destro's Secret"}]
 
 
 def test_get_last_played():
