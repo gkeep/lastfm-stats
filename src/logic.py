@@ -1,10 +1,11 @@
 import os
 import pylast
+import logging
 
-
-# NOTE: probably should remove this and add proper authentication instead of using my api keys
 API_KEY = os.environ["LASTFM_API_KEY"]
 API_SECRET = os.environ["LASTFM_API_SECRET"]
+
+logger = logging.getLogger(__name__)
 
 
 class PyLastHelper:
@@ -13,6 +14,7 @@ class PyLastHelper:
             api_key=API_KEY,
             api_secret=API_SECRET
         )
+        self.user = user
         self.userdata = self.lastfm_network.get_user(user)
 
     def get_last_played(self, limit: int = 10) -> list:
@@ -21,6 +23,9 @@ class PyLastHelper:
         :param limit: number of songs to get
         :return: list of songs (artist, track, album, cover url)
         """
+
+        logger.debug(f"getting last {limit} tracks for {self.user}")
+
         tracks = []
         raw = self.userdata.get_recent_tracks(limit)
 
@@ -39,7 +44,9 @@ class PyLastHelper:
                                               self.lastfm_network).get_cover_image(size=2)
                 })
             else:
-                pass
+                logger.warning(f"Album unknown for {track}, no album name and cover art available (upstream API issue)")
+
+            logger.debug(f"got {track}")
             tracks.append(track)
 
         return tracks
@@ -54,7 +61,10 @@ class PyLastHelper:
         """
         # INFO:
         #   1. for some reason period argument doesn't work in get_top_tracks()
-        #   2. not all tracks have an album assossiated with them, so we can't reliably get a cover image
+        #   2. not all tracks have an album associated with them, so we can't reliably get a cover image
+
+        logger.debug(f"getting top {limit} tracks for {self.user}, period - {period}")
+
         tracks = []
         raw = self.userdata.get_top_tracks(period=period, limit=limit)
 
